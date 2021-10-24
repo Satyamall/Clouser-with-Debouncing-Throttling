@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>DEBOUNCER</h1>
+    <input placeholder="text" id="input" type="text" />
+    <h3 id="output"></h3>
+
+    <h1>THROTTLER</h1>
+    <input placeholder="text" id="throttle-input" type="text" />
+    <h3 id="throttle-output"></h3>
+
+    <script type="text/javascript">
+
+        const input = document.getElementById("input");
+        const output = document.getElementById('output');
+        const throttleInput = document.getElementById("throttle-input");
+        const throttleOutput = document.getElementById('throttle-output');
+        
+        window.addEventListener("load", function () {
+            input.addEventListener("keyup", UpdateWithDebouncer)
+            throttleInput.addEventListener("keyup", UpdateWithThrottler)
+        })
+        function updateFunc() {
+            console.log(input.value);
+            output.textContent = input.value;
+        }
+        function updateFunc2() {
+            console.log(throttleInput.value);
+            throttleOutput.textContent = throttleInput.value;
+        }
+
+        function debouncer(func, delay) {
+            let id;
+            return function () {
+                // if id exists
+                // then clear the previous timeout 
+                console.log(`previous id value is ${id}`)
+                if (id) {
+                    clearTimeout(id);
+                }
+                id = setTimeout(() => {
+                    func()
+                }, delay)
+            }
+            console.log(`new setTimeout value is ${id}`)
+        }
+        
+        function throttle(func,delay){
+            // * when my last call was made
+            let lastCall = 0;
+            return function(){
+                // * find the time, when the new call has been made
+                const now = Date.now();
+                // * I need to know the difference
+                const diff = now - lastCall;
+
+                // * if the difference is greater than the delay
+                //* then invoke the function
+                if(diff>=delay){
+                    func();
+                    lastCall = now;
+                }
+                else{
+                    console.log(`you need to try again in ${delay- diff}ms`)
+                }
+                // *otherwise i ignore it 
+            }
+        }
+
+        const UpdateWithDebouncer = debouncer(updateFunc, 500)
+        const UpdateWithThrottler = throttle(updateFunc2, 2000)
+
+    </script>
+</body>
+</html>
